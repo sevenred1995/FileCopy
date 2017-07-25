@@ -33,6 +33,7 @@ public:
 	struct ThreadParam
 	{
 		int threadId;
+		int iThreads;
 		CusCopyFile* pObj;
 	};
 
@@ -54,6 +55,7 @@ private:
 	bool  SetMap(const std::string& sourceFileURL, const std::string& destinationFileURL, int iThreads);
 	static unsigned long __stdcall  CopyThread(LPVOID  param);
 	void  CopyProc(int iThread);
+	void  ListenProc(int iThreads);
 	UINT64 GetAllocSize(UINT64  totalSize,int totalThreads);
 private:
 	std::map<int, ThreadCopyInfo> mCopyMap;

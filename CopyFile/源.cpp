@@ -6,9 +6,8 @@
 #include <thread>
 using namespace std;
 int main() {
-	//std::string src = "D:\\新建文件夹";
-	//std::string des = "E:\\ER";
-	//CopyAllFolderAndFile(src,des,".*");
-	/*char str = '\\';*/
+	std::string src = "D:\\新建文件夹";
+	std::string des = "E:\\ER";
+	CopyAllFolderAndFile(src,des,".*");
 	return 0;
 }

@@ -15,7 +15,7 @@
 #include <iostream>
 #include <time.h>
 #include "FileMapping.h"
-#include <thread>
+#include <conio.h>
 #else
 #include <dirent.h>  
 #include <unistd.h>  
@@ -33,8 +33,7 @@ bool CusCopyFile::CopyAllFile(const std::string& sourceFolderURL,const std::stri
 	std::vector<std::string> files;
 	std::vector<std::string> dirs;
 	ReadAllFloders(files,dirs);
-	if (!CopyDirecFromCache(dirs))
-		return false;//create direction failed
+	CopyDirecFromCache(dirs);
 	CopyFileFromCache(files); 
 	return true;
 }
@@ -102,7 +101,7 @@ bool CusCopyFile::CopyDirecFromCache(const std::vector<std::string>& dirs)
 	for (int i = 0; i < dirs.size(); i++)
 	{
 		if (!MakeDir(this->_desURL + dirs.at(i)))//link desFolder and source folder
-			return false;
+			continue;										 //return false;
 	}
 	return true;
 }
@@ -157,12 +156,13 @@ bool CusCopyFile::MakeDir(const std::string& url)
 		{
 			folderBuilder.append(sub);
 			if (0 == ::_access(folderBuilder.c_str(), 0))
-				continue; 
-			if (0 == ::_mkdir(folderBuilder.c_str()))
-				return true;
-			else
+			{
+				sub.clear();
+				continue;
+			}
+			if (0 != ::_mkdir(folderBuilder.c_str()))
 				return false;
-			sub.clear();
+			
 		}
 	}
 #else
@@ -193,51 +193,32 @@ CusCopyFile::ReadAllFloders(
 	string src = this->_sourceURL;
 	///TODO判断文件大小
 	if (fileNameList.empty())
-		p = src.append("\\*").append(this->_fileSuffix);
+		p = src.append("\\*");// .append(this->_fileSuffix);
 	else
-		p = src.append(fileNameList).append("\\*").append(this->_fileSuffix);
-	if ((_hFile = _findfirst(p.c_str(), &fileInfo)) == -1)
+		p = src.append(fileNameList).append("\\*");// .append(this->_fileSuffix);
+
+	if ((_hFile = _findfirst(p.c_str(), &fileInfo)) != -1)
+	{
+		do
+		{
+			if ((fileInfo.attrib &  _A_SUBDIR)) {
+				if (strcmp(fileInfo.name, ".") != 0 && strcmp(fileInfo.name, "..") != 0)
+				{
+					dirs.push_back(temp.assign(fileNameList).append("\\").append(fileInfo.name));//process all file
+					ReadAllFloders(files, dirs, temp.assign(fileNameList).append("\\").append(fileInfo.name));
+				}
+			}
+			else
+				files.push_back(temp.assign(fileNameList).append("\\").append(fileInfo.name));//process all dir
+				
+		} while (_findnext(_hFile, &fileInfo) == 0);
+	}
+	else
 	{
 		cout << "There is No This Directional,MayBe you will copy single file!" << endl;
-		return;
 	}
-	do
-	{
-		if ((fileInfo.attrib &  _A_SUBDIR))
-			if (strcmp(fileInfo.name, ".") != 0 && strcmp(fileInfo.name, "..") != 0)
-			{
-				dirs.push_back(temp.assign(fileNameList).append("\\").append(fileInfo.name));//process all file
-				ReadAllFloders(files, dirs, temp.assign(fileNameList).append("\\").append(fileInfo.name));
-			}
-		else
-			files.push_back(temp.assign(fileNameList).append("\\").append(fileInfo.name));//process all dir
-	} while (_findnext(_hFile, &fileInfo) == 0);
 	_findclose(_hFile);
-#else
-	DIR *dir;
-	struct dirent *ptr;
-	if ((dir = opendir(this->srcDirPath.c_str())) == NULL)
-	{
-		std::cout << this->srcDirPath << " not found" << std::endl;
-		return false;
-	}
-	while ((ptr = readdir(dir)) != NULL)
-	{
-		if ((ptr->d_name == ".") || (ptr->d_name == ".."))  //current / parent  
-			continue;
-		else if (ptr->d_type == 8)  //file  
-			files.push_back(ptr->d_name);  
-		else if (ptr->d_type == 10)  //link file  
-			continue;
-		else if (ptr->d_type == 4)  //dir  
-		{
-			dirs.push_back(ptr->d_name);
-		}
-	}
-	closedir(dir);
-
 #endif
-
 }
 
 bool CusCopyFile::CopyByStream(const std::string& sourceFileURL,const std::string& destinationFileURL)
@@ -279,19 +260,21 @@ bool CusCopyFile::CopyByMmap(const std::string& sourceFileURL,const std::string&
 	int iThreads=1;
 	if (false == SetMap(sourceFileURL, destinationFileURL, iThreads))
 		return false;
-	HANDLE* handles=new HANDLE[iThreads];
-	for (int i = 0; i < iThreads; i++)
+	HANDLE* handles=new HANDLE[iThreads+1];
+	for (int i = 0; i < iThreads+1; i++)
 	{
 		ThreadParam *pThreadParam = new ThreadParam();
 		memset(pThreadParam, 0, sizeof(ThreadParam));
 		pThreadParam->pObj = this;
 		pThreadParam->threadId = i;
+		pThreadParam->iThreads = iThreads;
 		HANDLE hThread = CreateThread(NULL,NULL, CopyThread, pThreadParam, NULL, NULL);
 		handles[i] = hThread;
 	}
+	//handles[iThreads]=CreateThread(NULL,NULL,ListenThread,)
 	WaitForMultipleObjects(iThreads, handles, true, INFINITE);
-	cout << "=======all Thread " << "run end" << endl;
-	for (int i = 0; i < iThreads; i++)
+	cout << "=======all Thread " << "run end===============" << endl;
+	for (int i = 0; i < iThreads+1; i++)
     	CloseHandle(handles[i]);
 	delete[] handles;
 	return true;
@@ -341,13 +324,9 @@ void CusCopyFile::CopyProc(int iThread)
 		if(false==FileMapping::Read(info.pSrcMapping,info.offset,block,buf))
 			break;//interrupt
 		if(false==FileMapping::Write(info.pDesMapping,info.offset,block,buf))
-			break;//interrupt
-		//CLock_Mutex_Lock(mutex);
-		//float progess = (float)(info.offset-info.startPos) / (info.endPos - info.startPos);
-		//if (iThread == 0)
-		//   cout << "ThreadId:" << iThread << "             " << "progoess:%" << progess*100<< endl;
-		//CLock_Mutex_UnLock(mutex);
+			break;//interrupt 
 		info.offset = info.offset + block;
+		it->second.offset = info.offset;
 		if (info.offset >= info.endPos)
 		{
 			CloseHandle(info.pSrcMapping);
@@ -356,13 +335,38 @@ void CusCopyFile::CopyProc(int iThread)
 		}
 	}
 	clock_t end = clock();
-	cout << "Thread " << iThread << " run end,times:" << (end - start)/ CLOCKS_PER_SEC << endl;
+	cout <<endl<< "Thread " << iThread << " run end,times:" << (end - start)/ CLOCKS_PER_SEC << endl;
+}
+
+void CusCopyFile::ListenProc(int iThreads)
+{
+	while (true)
+	{
+		//listen every progress of the thread;
+		for (int i = 0; i < iThreads; i++)
+		{
+			std::map<int, ThreadCopyInfo>::iterator it = mCopyMap.find(i);
+			if (it == mCopyMap.end())
+				return;
+			float progress = (float)(it->second.offset - it->second.startPos) / (it->second.endPos - it->second.startPos);
+			printf("\rThread%d:%0.2f%%", i,progress*100);
+			fflush(stdout);
+		}
+	}
 }
 
 unsigned long CusCopyFile::CopyThread(LPVOID param)
 {
 	ThreadParam* pThreadParam = (ThreadParam*)param;
-	pThreadParam->pObj->CopyProc(pThreadParam->threadId);
+
+	if (pThreadParam->threadId != pThreadParam->iThreads)
+	{
+		pThreadParam->pObj->CopyProc(pThreadParam->threadId);
+	}
+	else
+	{
+		pThreadParam->pObj->ListenProc(pThreadParam->iThreads);
+	}
 	if (NULL != pThreadParam)
 	{
 		delete pThreadParam;

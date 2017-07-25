@@ -14,11 +14,11 @@ public:
 		unsigned long low;
 		unsigned long high;
 	};
-	static void *Open(const std::string fileURL, UINT64 size);
-	static void *Open(void* pparam);
+	static void   *Open(const std::string fileURL, UINT64 size);
+	static void   *Open(void* pparam);
 	static UINT64 GetSize(std::string fileURL);
-	static bool Read(void * pMmaping, UINT64 offset, unsigned long size, void* buf);
-	static bool Write(void * pMmaping, UINT64 offset, unsigned long size, const void* buf);
-	static void Close(void ** ppMapping);
+	static bool   Read(void * pMmaping, UINT64 offset, unsigned long size, void* buf);
+	static bool   Write(void * pMmaping, UINT64 offset, unsigned long size, const void* buf);
+	static void   Close(void ** ppMapping);
 };
 
