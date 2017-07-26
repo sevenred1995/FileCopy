@@ -152,18 +152,15 @@ bool CusCopyFile::MakeDir(const std::string& url)
 	{
 		const char c = *it;
 		sub.push_back(c);
-		if (c == '\\' || it == url.end() - 1)
+		if (c != '\\' && it != url.end() - 1)continue;
+		folderBuilder.append(sub);
+		if (0 == ::_access(folderBuilder.c_str(), 0))
 		{
-			folderBuilder.append(sub);
-			if (0 == ::_access(folderBuilder.c_str(), 0))
-			{
-				sub.clear();
-				continue;
-			}
-			if (0 != ::_mkdir(folderBuilder.c_str()))
-				return false;
-			
+			sub.clear();
+			continue;
 		}
+		if (0 != ::_mkdir(folderBuilder.c_str()))
+			return false;
 	}
 #else
 	
@@ -201,7 +198,7 @@ CusCopyFile::ReadAllFloders(
 	{
 		do
 		{
-			if ((fileInfo.attrib &  _A_SUBDIR)) {
+			if ((fileInfo.attrib &  _A_SUBDIR)) { 
 				if (strcmp(fileInfo.name, ".") != 0 && strcmp(fileInfo.name, "..") != 0)
 				{
 					dirs.push_back(temp.assign(fileNameList).append("\\").append(fileInfo.name));//process all file

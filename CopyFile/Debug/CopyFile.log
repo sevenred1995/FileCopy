@@ -1,11 +1,3 @@
-﻿  CopyFile.cpp
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(70): warning C4244: 'initializing': conversion from 'UINT64' to 'int', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(101): warning C4018: '<': signed/unsigned mismatch
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(113): warning C4018: '<': signed/unsigned mismatch
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(120): warning C4244: 'initializing': conversion from 'UINT64' to 'int', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(242): warning C4244: 'initializing': conversion from 'std::streamoff' to 'long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(250): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(324): warning C4244: 'argument': conversion from 'UINT64' to 'unsigned long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(326): warning C4244: 'argument': conversion from 'UINT64' to 'unsigned long', possible loss of data
+﻿  源.cpp
   CopyFile.vcxproj -> D:\PersonProject\work\CopyFile\Debug\CopyFile.exe
   CopyFile.vcxproj -> D:\PersonProject\work\CopyFile\Debug\CopyFile.pdb (Full PDB)
