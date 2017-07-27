@@ -148,13 +148,11 @@
   <ItemGroup>
     <ClInclude Include="CopyFile.h" />
     <ClInclude Include="FileMapping.h" />
-    <ClInclude Include="MD5Checksum.h" />
     <ClInclude Include="Transfer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CopyFile.cpp" />
     <ClCompile Include="FileMapping.cpp" />
-    <ClCompile Include="MD5Checksum.cpp" />
     <ClCompile Include="源.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -24,9 +24,6 @@
     <ClInclude Include="Transfer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MD5Checksum.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CopyFile.cpp">
@@ -36,9 +33,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="FileMapping.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MD5Checksum.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

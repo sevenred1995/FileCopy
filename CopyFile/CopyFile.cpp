@@ -4,8 +4,8 @@
 #include <cstring>  
 
 #if defined(_WIN32)
-#include<Windows.h>
-#include<WinBase.h>
+#include <Windows.h>
+#include <WinBase.h>
 #include <direct.h>
 #include <io.h> 
 #include <shlobj.h>
@@ -24,78 +24,51 @@
 #include <pwd.h>  
 #endif
 
-using namespace std;
+
 #define BLOCK_SIZE 1024*256
-bool CusCopyFile::CopyAllFile(const std::string& sourceFolderURL,const std::string& destinationFolderURL)
+
+using namespace std;
+
+unsigned int CusCopyFile::CopyAllFile(const std::string& sourceFolderURL,const std::string& desFolderURL)
 {
 	this->_sourceURL = sourceFolderURL;
-	this->_desURL    = destinationFolderURL;
+	this->_desURL    = desFolderURL;
 	std::vector<std::string> files;
 	std::vector<std::string> dirs;
 	ReadAllFloders(files,dirs);
-	CopyDirecFromCache(dirs);
-	CopyFileFromCache(files); 
-	return true;
+	if (!CopyDirecFromCache(dirs))//des
+		return CREATE_FLODER_FAILED;
+	return CopyFileFromCache(files); 
+	//return true;
 }
-bool CusCopyFile::CopyOneFile(const std::string& sourceFileURL, const std::string& destinationFolderURL)
+unsigned int CusCopyFile::CopyOneFile(
+	const std::string& sourceFileURL, const std::string& desFolderURL
+)
 {
 	this->_sourceURL = sourceFileURL;
-	this->_desURL = destinationFolderURL;
-	std::string src = sourceFileURL;
+	this->_desURL = desFolderURL;
 	int n = 0;
 	string fileName;
 #if defined(_WIN32)
-	while (src.find('\\', n) != std::string::npos)
-		n = src.find('\\', n) + 1;
+	while (sourceFileURL.find('\\', n) != std::string::npos)
+		n = sourceFileURL.find('\\', n) + 1;
 #else
-	n = 0;
-	while (src.find('/', n) != std::string::npos)
-		n = src.find('/', n) + 1;
 
 #endif
 	if (n == 0)
 	{
-		std::cout << "src path error" << endl;
-		return false;
+		printf("src path error\n");
+		return SRC_FILE_ERROR;
 	}
-	fileName = src.substr(n - 1, src.size());//get the file name
-	MakeDir(destinationFolderURL);//create destinationURL
-	std::string destionFileURL = destinationFolderURL + fileName;
-	if (IsExit(destionFileURL)) {
-		cout << "file has exited.." << endl;
-		return false;
-	}
-	cout << "copying..." << endl;
-	clock_t start = clock();
-	int size = FileMapping::GetSize(sourceFileURL);
-	if (size < 1024 * 256)
-	{
-		if (CopyByStream(sourceFileURL, destionFileURL))
-			cout << sourceFileURL << " copy success" << endl;
-		else
-		{
-			cout << destionFileURL << "copy failed" << endl;
-			return false;
-		}
-	}
-	else
-	{
-		if (CopyByMmap(sourceFileURL, destionFileURL))
-			cout << sourceFileURL << " copy success" << endl;
-		else
-		{
-			cout << sourceFileURL << "copy failed" << endl;
-			return false;
-		}
-	}
-	clock_t end = clock();
-	cout << "need time："<< (end - start)/ CLOCKS_PER_SEC <<"s"<< endl;
-	return true;
+	fileName = sourceFileURL.substr(n - 1, sourceFileURL.size());//get the file name
+	MakeDir(desFolderURL);//create desURL--处理返回值
+	std::string destionFileURL = desFolderURL + fileName;
+	return ToolsCopy(sourceFileURL, destionFileURL);
 }
 
 bool CusCopyFile::CopyDirecFromCache(const std::vector<std::string>& dirs)
 {
-	if (dirs.empty())
+	if (dirs.empty())//no sub directory
 		return MakeDir(this->_desURL);
 	//copy dir
 	for (int i = 0; i < dirs.size(); i++)
@@ -106,41 +79,49 @@ bool CusCopyFile::CopyDirecFromCache(const std::vector<std::string>& dirs)
 	return true;
 }
 
-void CusCopyFile::CopyFileFromCache(const std::vector<std::string>& files)
+//批量拷贝
+unsigned CusCopyFile::CopyFileFromCache(const std::vector<std::string>& files)
 {
 	cout << "copying..." << endl;
 	clock_t start = clock();
 	for (int i=0; i < files.size(); i++)
 	{
 		std::string srcFileURL = this->_sourceURL + files.at(i);
-		std::string desFileURL = this->_desURL    + files.at(i);
-		if (IsExit(desFileURL)) {
-			cout << "file has exited.." << endl; continue;
-		}
-		int size = FileMapping::GetSize(srcFileURL);
-		if (size < 1024 * 256)
+	    std::string desFileURL = this->_desURL + files.at(i);
+		unsigned int res = ToolsCopy(srcFileURL, desFileURL);
+		if (COPY_FILE_EXISTED == res)
 		{
-			if(CopyByStream(srcFileURL,desFileURL))
-				cout << srcFileURL << " copy success" << endl;
-			else
-			{
-				cout << srcFileURL << "copy failed" << endl;
-				continue;
-			}
+			printf("%s has existed!\n",desFileURL.c_str());
+			return COPY_FILE_EXISTED;
 		}
-		else
-		{
-			if (CopyByMmap(srcFileURL, desFileURL))
-				cout << srcFileURL << " copy success" << endl;
-			else
-			{
-				cout << srcFileURL << "copy failed" << endl;
-				continue;
-			}
-		}
+		if (COPY_FILE_SUCCESS == res)
+			continue;
+		return COPY_FILE_FAILED;
 	}
 	clock_t end = clock();
-	cout << "copy all file need time：" << (end - start) / CLOCKS_PER_SEC <<"s"<< endl;
+	printf("copy all file need time:%ds\n", (end - start) / CLOCKS_PER_SEC);
+	return COPY_FILE_SUCCESS;
+}
+unsigned int CusCopyFile::ToolsCopy(
+    const std::string & srcFileURL,const std::string & desFileURL)
+{
+	if (!IsExit(srcFileURL))
+		return SRC_FILE_ERROR;
+	//file existed,don't handle this file
+	if (IsExit(desFileURL)) {
+		return COPY_FILE_EXISTED;//file exited,user maybe can selected to continue cover it;
+		//continue
+	}
+	int size = FileMapping::GetSize(srcFileURL);
+	if (!CopyByMmap(srcFileURL, desFileURL))
+	{
+		printf("%s copy failed\n",desFileURL.c_str());
+		return COPY_FILE_FAILED;
+		//continue;
+	}
+	//cout << srcFileURL << "copy success" << endl;
+	printf("%s copy success\n", srcFileURL.c_str());
+	return COPY_FILE_SUCCESS;
 }
 bool CusCopyFile::MakeDir(const std::string& url)
 {
@@ -154,12 +135,12 @@ bool CusCopyFile::MakeDir(const std::string& url)
 		sub.push_back(c);
 		if (c != '\\' && it != url.end() - 1)continue;
 		folderBuilder.append(sub);
-		if (0 == ::_access(folderBuilder.c_str(), 0))
+		if (0 == ::_access(folderBuilder.c_str(), 0))//file have existed
 		{
 			sub.clear();
 			continue;
 		}
-		if (0 != ::_mkdir(folderBuilder.c_str()))
+		if (0 != ::_mkdir(folderBuilder.c_str()))//create failed
 			return false;
 	}
 #else
@@ -171,7 +152,7 @@ bool CusCopyFile::MakeDir(const std::string& url)
 bool CusCopyFile::IsExit(const std::string & url)
 {
 	struct stat fileStat;
-	if ((stat(url.c_str(), &fileStat) == 0))
+	if ((stat(url.c_str(), &fileStat) == 0)&&!(fileStat.st_mode&_S_IFDIR))
 	{
 		return true;
 	}
@@ -188,7 +169,6 @@ CusCopyFile::ReadAllFloders(
 	struct _finddata_t fileInfo;
 	string p, temp;
 	string src = this->_sourceURL;
-	///TODO判断文件大小
 	if (fileNameList.empty())
 		p = src.append("\\*");// .append(this->_fileSuffix);
 	else
@@ -212,25 +192,26 @@ CusCopyFile::ReadAllFloders(
 	}
 	else
 	{
-		cout << "There is No This Directional,MayBe you will copy single file!" << endl;
+		printf("There is no this directory,MayBe you will copy single file!\n");
+		CopyOneFile(this->_sourceURL,this->_desURL);
 	}
 	_findclose(_hFile);
 #endif
 }
 
-bool CusCopyFile::CopyByStream(const std::string& sourceFileURL,const std::string& destinationFileURL)
+bool CusCopyFile::CopyByStream(const std::string& sourceFileURL,const std::string& desFileURL)
 {
 	std::ifstream _in;
 	_in.open(sourceFileURL, ios::binary);
 	if (!_in) {
-		std::cout << "open src file : " << sourceFileURL << " failed" << std::endl;
+		printf("open src file : %s failed\n", sourceFileURL.c_str());
 		return false;
 	}
 	std::ofstream _out;
-	_out.open(destinationFileURL, ios::binary);
+	_out.open(desFileURL, ios::binary);
 	if (!_out)
 	{
-		std::cout << "create new file : " << destinationFileURL << " failed" << std::endl;
+		printf("create new file : %s failed\n", desFileURL.c_str());
 		_in.close();
 		return false;
 	}
@@ -252,10 +233,11 @@ bool CusCopyFile::CopyByStream(const std::string& sourceFileURL,const std::strin
 	_in.close();
 	return true;
 }
-bool CusCopyFile::CopyByMmap(const std::string& sourceFileURL,const std::string& destinationFileURL)
+bool CusCopyFile::CopyByMmap(const std::string& sourceFileURL,const std::string& desFileURL)
 {
+	
 	int iThreads=1;
-	if (false == SetMap(sourceFileURL, destinationFileURL, iThreads))
+	if (false == SetMap(sourceFileURL, desFileURL, iThreads))
 		return false;
 	HANDLE* handles=new HANDLE[iThreads+1];
 	for (int i = 0; i < iThreads+1; i++)
@@ -268,16 +250,15 @@ bool CusCopyFile::CopyByMmap(const std::string& sourceFileURL,const std::string&
 		HANDLE hThread = CreateThread(NULL,NULL, CopyThread, pThreadParam, NULL, NULL);
 		handles[i] = hThread;
 	}
-	//handles[iThreads]=CreateThread(NULL,NULL,ListenThread,)
 	WaitForMultipleObjects(iThreads, handles, true, INFINITE);
-	cout << "=======all Thread " << "run end===============" << endl;
+	printf("\n=======all Thread run end===============\n");
 	for (int i = 0; i < iThreads+1; i++)
     	CloseHandle(handles[i]);
 	delete[] handles;
 	return true;
 }
 
-bool CusCopyFile::SetMap(const std::string & sourceFileURL, const std::string & destinationFileURL, int iThreads)
+bool CusCopyFile::SetMap(const std::string & sourceFileURL, const std::string & desFileURL, int iThreads)
 {
 	UINT64 size = FileMapping::GetSize(sourceFileURL);
 	UINT64 threadCopySize = GetAllocSize(size,iThreads);
@@ -290,7 +271,7 @@ bool CusCopyFile::SetMap(const std::string & sourceFileURL, const std::string & 
 		info.pSrcMapping = FileMapping::Open(sourceFileURL, 0);
 		if (NULL == info.pSrcMapping)
 			return false;
-		info.pDesMapping = FileMapping::Open(destinationFileURL, size);
+		info.pDesMapping = FileMapping::Open(desFileURL, size);
 		if (NULL == info.pDesMapping)
 			return false;
 		info.startPos = i*threadCopySize;
@@ -311,7 +292,6 @@ void CusCopyFile::CopyProc(int iThread)
 		return;
 	ThreadCopyInfo info = it->second;
 	BYTE buf[BLOCK_SIZE];
-	clock_t start = clock();
 	while (true)
 	{
 		memset(buf, 0, BLOCK_SIZE);
@@ -331,23 +311,26 @@ void CusCopyFile::CopyProc(int iThread)
 			break;
 		}
 	}
-	clock_t end = clock();
-	cout <<endl<< "Thread " << iThread << " run end,times:" << (end - start)/ CLOCKS_PER_SEC << endl;
 }
 
 void CusCopyFile::ListenProc(int iThreads)
 {
+    std::map<int, ThreadCopyInfo>::iterator it;
 	while (true)
 	{
 		//listen every progress of the thread;
 		for (int i = 0; i < iThreads; i++)
 		{
-			std::map<int, ThreadCopyInfo>::iterator it = mCopyMap.find(i);
+			it=mCopyMap.find(i);
 			if (it == mCopyMap.end())
 				return;
-			float progress = (float)(it->second.offset - it->second.startPos) / (it->second.endPos - it->second.startPos);
-			printf("\rThread%d:%0.2f%%", i,progress*100);
-			fflush(stdout);
+			Sleep(1);
+			if (it->second.offset != it->second.endPos)
+			{
+				float progress = (float)(it->second.offset - it->second.startPos) / (it->second.endPos - it->second.startPos);
+				printf("\rThread%d:%0.2f%%", i, progress * 100);
+				fflush(stdout);
+			}
 		}
 	}
 }
