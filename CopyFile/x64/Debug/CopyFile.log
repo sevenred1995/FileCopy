@@ -1,0 +1,12 @@
+﻿  源.cpp
+  FileMapping.cpp
+c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\sys\stat.h(228): error C2466: cannot allocate an array of constant size 0
+c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\sys\stat.h(233): error C2466: cannot allocate an array of constant size 0
+d:\personproject\work\copyfile\copyfile\filemapping.cpp(30): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+d:\personproject\work\copyfile\copyfile\filemapping.cpp(93): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+d:\personproject\work\copyfile\copyfile\filemapping.cpp(130): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+d:\personproject\work\copyfile\copyfile\filemapping.cpp(188): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
+d:\personproject\work\copyfile\copyfile\filemapping.cpp(228): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
+  CopyFile.cpp
+d:\personproject\work\copyfile\copyfile\copyfile.cpp(18): warning C4244: '=': conversion from 'intptr_t' to 'long', possible loss of data
+  Generating Code...

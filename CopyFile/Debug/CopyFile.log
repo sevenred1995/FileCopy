@@ -1,11 +1,9 @@
-﻿  CopyFile.cpp
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(70): warning C4244: 'initializing': conversion from 'UINT64' to 'int', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(101): warning C4018: '<': signed/unsigned mismatch
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(113): warning C4018: '<': signed/unsigned mismatch
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(120): warning C4244: 'initializing': conversion from 'UINT64' to 'int', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(242): warning C4244: 'initializing': conversion from 'std::streamoff' to 'long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(250): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(324): warning C4244: 'argument': conversion from 'UINT64' to 'unsigned long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(326): warning C4244: 'argument': conversion from 'UINT64' to 'unsigned long', possible loss of data
-  CopyFile.vcxproj -> D:\PersonProject\work\CopyFile\Debug\CopyFile.exe
-  CopyFile.vcxproj -> D:\PersonProject\work\CopyFile\Debug\CopyFile.pdb (Full PDB)
+﻿  源.cpp
+c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\sys\stat.h(228): error C2466: cannot allocate an array of constant size 0
+c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\sys\stat.h(233): error C2466: cannot allocate an array of constant size 0
+  FileMapping.cpp
+c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\sys\stat.h(228): error C2466: cannot allocate an array of constant size 0
+c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\sys\stat.h(233): error C2466: cannot allocate an array of constant size 0
+d:\personproject\work\copyfile\copyfile\filemapping.cpp(188): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
+d:\personproject\work\copyfile\copyfile\filemapping.cpp(228): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
+  Generating Code...
