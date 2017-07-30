@@ -1,9 +1,3 @@
-﻿  源.cpp
-c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\sys\stat.h(228): error C2466: cannot allocate an array of constant size 0
-c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\sys\stat.h(233): error C2466: cannot allocate an array of constant size 0
-  FileMapping.cpp
-c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\sys\stat.h(228): error C2466: cannot allocate an array of constant size 0
-c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\sys\stat.h(233): error C2466: cannot allocate an array of constant size 0
-d:\personproject\work\copyfile\copyfile\filemapping.cpp(188): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
-d:\personproject\work\copyfile\copyfile\filemapping.cpp(228): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
-  Generating Code...
+﻿  CopyFile.cpp
+d:\personproject\work\copyfile\copyfile\copyfile.cpp(13): error C2039: 'st_mode': is not a member of '_stat64i32'
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\sys\stat.h(58): note: see declaration of '_stat64i32'

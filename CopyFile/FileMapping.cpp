@@ -1,7 +1,7 @@
 #include "FileMapping.h"
 #include <windows.h>
 
-void * FileMapping::Open(const std::string fileURL, UINT64 size)
+void * FileMapping::Open(const char* filePath, UINT64 size)
 {
 	//if (fileURL.empty())
 		//return NULL;
@@ -27,7 +27,7 @@ void * FileMapping::Open(const std::string fileURL, UINT64 size)
 	{
 		WCHAR wszClassName[256];
 		memset(wszClassName, 0, sizeof(wszClassName));
-		MultiByteToWideChar(CP_ACP, 0, fileURL.c_str(), strlen(fileURL.c_str()) + 1, wszClassName, sizeof(wszClassName) / sizeof(wszClassName[0]));
+		MultiByteToWideChar(CP_ACP, 0, filePath, strlen(filePath) + 1, wszClassName, sizeof(wszClassName) / sizeof(wszClassName[0]));
 		hFile = CreateFile(wszClassName, desiredAccess, shareMode, NULL, creation, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 	}
 	catch (...)
@@ -90,7 +90,7 @@ void * FileMapping::Open(void * pparam)
 	{
 		WCHAR wszClassName[256];
 		memset(wszClassName, 0, sizeof(wszClassName));
-		MultiByteToWideChar(CP_ACP, 0, pDetail->fileurl.c_str(), strlen(pDetail->fileurl.c_str()) + 1, wszClassName, sizeof(wszClassName) / sizeof(wszClassName[0]));
+		MultiByteToWideChar(CP_ACP, 0, pDetail->fileurl, strlen(pDetail->fileurl) + 1, wszClassName, sizeof(wszClassName) / sizeof(wszClassName[0]));
 		hFile= CreateFile(wszClassName, pDetail->desiredAccess, pDetail->shareMode, NULL, pDetail->creation, pDetail->attribute, NULL);
 	}
 	catch (const std::exception&)
@@ -120,16 +120,16 @@ void * FileMapping::Open(void * pparam)
 	return hMapping;
 }
 
-UINT64 FileMapping::GetSize(std::string fileURL)
+UINT64 FileMapping::GetSize(const char* filePath)
 {
 	HANDLE hFile = INVALID_HANDLE_VALUE;
 	try
 	{
 		WCHAR wszClassName[256];
 		memset(wszClassName, 0, sizeof(wszClassName));
-		MultiByteToWideChar(CP_ACP, 0, fileURL.c_str(), strlen(fileURL.c_str()) + 1, wszClassName, sizeof(wszClassName) / sizeof(wszClassName[0]));
+		MultiByteToWideChar(CP_ACP, 0, filePath, strlen(filePath) + 1, wszClassName, sizeof(wszClassName) / sizeof(wszClassName[0]));
 		hFile = CreateFile(wszClassName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	}
+    }
 	catch (const std::exception&)
 	{
 		return INVALID_FILE_SIZE;

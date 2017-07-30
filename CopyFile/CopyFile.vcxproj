@@ -146,9 +146,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CopyFile.h" />
     <ClInclude Include="FileMapping.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CopyFile.cpp" />
     <ClCompile Include="FileMapping.cpp" />
     <ClCompile Include="源.cpp" />
   </ItemGroup>

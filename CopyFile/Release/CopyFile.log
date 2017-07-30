@@ -1,6 +1,0 @@
-﻿  FileMapping.cpp
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\sys/stat.h(228): error C2466: cannot allocate an array of constant size 0
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\sys/stat.h(233): error C2466: cannot allocate an array of constant size 0
-FileMapping.cpp(188): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
-FileMapping.cpp(228): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
-  源.cpp
