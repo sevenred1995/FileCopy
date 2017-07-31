@@ -1,16 +1,19 @@
 ﻿  CopyFile.cpp
-d:\personproject\work\copyfile\copyfile\copyfile.h(11): warning C4005: 'MAX_PATH': macro redefinition
+d:\personproject\work\copyfile\copyfile\copyfile.h(18): warning C4005: 'MAX_PATH': macro redefinition
   c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(60): note: see previous definition of 'MAX_PATH'
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(49): warning C4244: '=': conversion from 'intptr_t' to 'long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(126): warning C4244: '=': conversion from 'intptr_t' to 'long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(154): warning C4244: 'argument': conversion from 'UINT64' to 'unsigned long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(161): warning C4244: 'argument': conversion from 'UINT64' to 'unsigned long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(220): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(224): warning C4101: 'fn': unreferenced local variable
+d:\personproject\work\copyfile\copyfile\copyfile.cpp(78): warning C4244: '=': conversion from 'intptr_t' to 'long', possible loss of data
+d:\personproject\work\copyfile\copyfile\copyfile.cpp(182): warning C4244: 'argument': conversion from 'UINT64' to 'unsigned long', possible loss of data
+d:\personproject\work\copyfile\copyfile\copyfile.cpp(191): warning C4244: 'argument': conversion from 'UINT64' to 'unsigned long', possible loss of data
+d:\personproject\work\copyfile\copyfile\copyfile.cpp(244): warning C4244: '=': conversion from 'intptr_t' to 'long', possible loss of data
+d:\personproject\work\copyfile\copyfile\copyfile.cpp(277): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+d:\personproject\work\copyfile\copyfile\copyfile.cpp(281): warning C4101: 'fn': unreferenced local variable
   Generating Code...
   Compiling...
   源.cpp
-d:\personproject\work\copyfile\copyfile\copyfile.h(11): warning C4005: 'MAX_PATH': macro redefinition
+d:\personproject\work\copyfile\copyfile\copyfile.h(18): warning C4005: 'MAX_PATH': macro redefinition
+  c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(60): note: see previous definition of 'MAX_PATH'
+  CopyFileUI.cpp
+d:\personproject\work\copyfile\copyfile\copyfile.h(18): warning C4005: 'MAX_PATH': macro redefinition
   c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(60): note: see previous definition of 'MAX_PATH'
   Generating Code...
   CopyFile.vcxproj -> D:\PersonProject\work\CopyFile\x64\Debug\CopyFile.exe

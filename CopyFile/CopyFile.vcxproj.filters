@@ -21,6 +21,9 @@
     <ClInclude Include="CopyFile.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CopyFileUI.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="源.cpp">
@@ -30,6 +33,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CopyFile.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CopyFileUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

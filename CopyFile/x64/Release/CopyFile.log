@@ -1,0 +1,22 @@
+﻿  CopyFile.cpp
+d:\personproject\work\copyfile\copyfile\CopyFile.h(11): warning C4005: 'MAX_PATH': macro redefinition
+  C:\Program Files (x86)\Windows Kits\8.1\Include\shared\minwindef.h(60): note: see previous definition of 'MAX_PATH'
+CopyFile.cpp(53): warning C4244: '=': conversion from 'intptr_t' to 'long', possible loss of data
+CopyFile.cpp(153): warning C4244: '=': conversion from 'intptr_t' to 'long', possible loss of data
+CopyFile.cpp(181): warning C4244: 'argument': conversion from 'UINT64' to 'unsigned long', possible loss of data
+CopyFile.cpp(188): warning C4244: 'argument': conversion from 'UINT64' to 'unsigned long', possible loss of data
+CopyFile.cpp(249): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+CopyFile.cpp(253): warning C4101: 'fn': unreferenced local variable
+  FileMapping.cpp
+FileMapping.cpp(30): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+FileMapping.cpp(93): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+FileMapping.cpp(130): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+FileMapping.cpp(188): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
+FileMapping.cpp(228): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
+  源.cpp
+d:\personproject\work\copyfile\copyfile\CopyFile.h(11): warning C4005: 'MAX_PATH': macro redefinition
+  C:\Program Files (x86)\Windows Kits\8.1\Include\shared\minwindef.h(60): note: see previous definition of 'MAX_PATH'
+d:\personproject\work\copyfile\copyfile\CopyFile.h(55): error C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(119): note: see declaration of 'strcpy'
+d:\personproject\work\copyfile\copyfile\CopyFile.h(62): error C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(90): note: see declaration of 'strcat'

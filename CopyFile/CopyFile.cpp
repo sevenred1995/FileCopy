@@ -1,38 +1,66 @@
 #include "CopyFile.h"
-
-#include <stdio.h>
-#include <string.h>
-#include <process.h>
 #include "FileMapping.h"
 
-bool CusCopyFile::CopyFileA(
-    const char * sourceFile, const char * desDir)
+
+
+
+
+CusCopyFile::CusCopyFile():_inturrput(false)
 {
-    TYPECODE desCode = GetPathTypeCode(desDir);
+    memset(_err_info, 0, 1024);
+}
+
+CusCopyFile::~CusCopyFile()
+{
+   
+}
+//sourceFile example:E:\\xx...\\xx or E:\\...\\xx.txt
+//deDir      example:E:\\xx...\\xx
+bool CusCopyFile::CopyFileA(
+    const char * sourceFile, 
+    const char * desDir,
+    copyType  type)
+{
+    typeCode desCode = GetPathTypeCode(desDir);
     if (!(desCode&ISDIR))
+    {
+        sprintf(_err_info, "%s", "destination director failed!");
         return false;//desDir pattern error
-    TYPECODE srcCode = GetPathTypeCode(sourceFile);
+    }
+    _type = type;
+    typeCode srcCode = GetPathTypeCode(sourceFile);
     if (srcCode&NOEXIST)
+    {
+        sprintf(_err_info, "%s", "source file not exist!");
         return false;
+    }
+        
     if (srcCode&ISFILE)
     {
         const char* fileName = GetFileName(sourceFile);
         CopyInfo info;
         if (!MkCopyInfo(info, sourceFile, desDir, fileName))
             return false;
-        ProcessFile(info,false);
+        if (!ProcessFile(info, false))
+            return false;
     }
     if (srcCode&ISDIR)
     {
-        //EnTer The DirProcess func
-        return ProcessDir(sourceFile,desDir);
+        bool ret=ProcessDir(sourceFile,desDir);
+        if (ret)
+           return false;
     }
     return true; 
 }
-
+bool CusCopyFile::GetErrInfo(char * &err)
+{
+    strcpy(err, _err_info);
+    ClearErrInfo();  
+    return true;
+}
 bool CusCopyFile::ProcessDir(const char* sourceDir,const char* desDir)
 {
-    if (_inturrput)return false;
+    if (_inturrput) return false;
     long    hFile = 0;
     bool    ret   = true;
     struct  _finddata_t fileInfo;
@@ -40,33 +68,44 @@ bool CusCopyFile::ProcessDir(const char* sourceDir,const char* desDir)
     char    desTemp[MAX_PATH];
     memset(srcTemp, 0, MAX_PATH);
     memset(desTemp, 0, MAX_PATH);
-    if (strlen(sourceDir) > MAX_PATH - 1)
-        return false;//overflow
-    strcpy(srcTemp, sourceDir);
-    if (strlen(sourceDir) + strlen("\\*.*") > MAX_PATH - 1)
+    if (false == Safestrcpy(srcTemp, sourceDir)||
+        false == Safestrcat(srcTemp, "\\*.*"))
+    {
+        sprintf(_err_info, "%s", "the length of the src path too long!");
+        _inturrput = true;
         return false;
-    strcat(srcTemp, "\\*.*");
+    }
     hFile = _findfirst(srcTemp, &fileInfo);
     memset(srcTemp, 0, MAX_PATH);
     if (hFile==-1)//search failed 
         return false;
     do 
     {
+        if (_inturrput)break;
         if(strcmp(fileInfo.name,".")==0
             ||strcmp(fileInfo.name,"..")==0)
             continue;
         if ((fileInfo.attrib&_A_SUBDIR)) {
-            strcpy(srcTemp, sourceDir);
-            strcat(srcTemp, "\\");
-            if (strlen(srcTemp) + strlen(fileInfo.name) > MAX_PATH - 1)
-                return false;//interrupt
-            strcat(srcTemp, fileInfo.name);
-            strcpy(desTemp, desDir);
-            strcat(desTemp,"\\");
-            strcat(desTemp,fileInfo.name);
+            if (false == Safestrcpy(srcTemp, sourceDir)||
+                false == Safestrcat(srcTemp, "\\")||
+                false == Safestrcat(srcTemp, fileInfo.name))
+            {
+                sprintf(_err_info, "%s", "the length of the src path too long!");
+                _inturrput = true;
+                return false;
+            }
+            if (false == Safestrcpy(desTemp, desDir)||
+                false == Safestrcat(desTemp, "\\")||
+                false == Safestrcat(desTemp, fileInfo.name))
+            {
+                sprintf(_err_info, "%s", "the length of the des path too long!");
+                _inturrput = true;
+                return false;
+            }
             //need one desDir
             if (false==MkDir(desTemp))
             {
+                sprintf(_err_info, "%s", "create director failed!");
                 _findclose(hFile);
                 _inturrput = false; 
                 return false;
@@ -88,7 +127,7 @@ bool CusCopyFile::ProcessDir(const char* sourceDir,const char* desDir)
         }
     } while (_findnext(hFile,&fileInfo)==0);
     _findclose(hFile);
-    return ret;
+    return _inturrput;
 }
 
 bool CusCopyFile::ProcessFile(const CopyInfo& info,bool isDir)
@@ -97,51 +136,39 @@ bool CusCopyFile::ProcessFile(const CopyInfo& info,bool isDir)
     char desTemp[MAX_PATH];
     memset(srcTemp, 0, MAX_PATH);
     memset(desTemp, 0, MAX_PATH);
-    strcpy(desTemp, info.desDir);
-    strcat(desTemp, "\\");
-    strcat(desTemp, info.fileName);
-
-    strcpy(srcTemp, info.srcDir);
+    if (false == Safestrcpy(desTemp, info.desDir) ||
+        false == Safestrcat(desTemp, "\\") ||
+        false == Safestrcat(desTemp, info.fileName))
+    {
+        sprintf(_err_info, "%s", "the length of the des path too long!");
+        return false;
+    }
+        
+    if (false == Safestrcpy(srcTemp, info.srcDir))
+    {
+        sprintf(_err_info, "%s", "the length of the src path too long!");
+        return false;
+    }
     if (isDir)
     {
-        strcat(srcTemp, "\\");
-        strcat(srcTemp, info.fileName);
+        if (false == Safestrcat(srcTemp, "\\") ||
+            false == Safestrcat(srcTemp, info.fileName))
+        {
+            sprintf(_err_info, "%s", "the length of the src path too long!");
+            return false;
+        }     
     }
-    if (0 == _access(desTemp, 0))//if the file have existed,we will compare the 
-    {                            //diff between of the Tow file
-    }        
+    if (0 == ::_access(desTemp, 0))
+    {
+        if (_type == NOOPERATION)
+            return true;
+        if (_type == OVERRIDE)
+            NULL;
+    }
     if (false == InitBytesTransInfo(srcTemp, desTemp))
         return false;
-    //create one thread to transfor the file info
-    HANDLE hTrans = 
-        (HANDLE)_beginthreadex(NULL, 0,CThreadFunc, this, 0, NULL);
-    WaitForSingleObject(hTrans, INFINITE);
-    return true;
+    return CopyProc();
 }
-//Get the filePath type
-//Path_No_Exist  Path_Is_File   Path_Is_Dir
-TYPECODE CusCopyFile::GetPathTypeCode(const char* path)
-{
-    long hFile = 0;
-    struct _finddata_t fileInfo;
-    hFile = _findfirst(path, &fileInfo);
-    if (hFile == -1)
-        return NOEXIST;
-    _findclose(hFile);
-    if (fileInfo.attrib&_A_SUBDIR)
-        return ISDIR;
-    else
-        return ISFILE;
-}
-
-unsigned int CusCopyFile::CThreadFunc(void * param)
-{
-    CusCopyFile* pObj = (CusCopyFile*)param;
-    if (pObj != NULL)
-        pObj->CopyProc();
-    return 0;
-}
-
 bool CusCopyFile::CopyProc()
 {
     unsigned char buf[BLOCK_SZIE];
@@ -154,22 +181,26 @@ bool CusCopyFile::CopyProc()
         if (false == FileMapping::Read(_transInfo.pSrcMapping,
             _transInfo.offset,block, buf))
         {
-            CloseHandle(_transInfo.pSrcMapping);
-            CloseHandle(_transInfo.pDesMapping);
+            sprintf(_err_info, "%s", "FileMapping::Read Failed!");
+            remove(_transInfo.desFile);
+            FileMapping::Close(&_transInfo.pSrcMapping);
+            FileMapping::Close(&_transInfo.pDesMapping);
             return false;
         }
         if (false == FileMapping::Write(_transInfo.pDesMapping, 
             _transInfo.offset,block, buf))
         {
-            CloseHandle(_transInfo.pSrcMapping);
-            CloseHandle(_transInfo.pDesMapping);
+            sprintf(_err_info, "%s", "FileMapping::Write Failed!");
+            remove(_transInfo.desFile);
+            FileMapping::Close(&_transInfo.pSrcMapping);
+            FileMapping::Close(&_transInfo.pDesMapping);
             return false;
         }
         _transInfo.offset = _transInfo.offset + block;
         if (_transInfo.offset >= _transInfo.endPos)
         {
-            CloseHandle(_transInfo.pSrcMapping);
-            CloseHandle(_transInfo.pDesMapping);
+            FileMapping::Close(&_transInfo.pSrcMapping);
+            FileMapping::Close(&_transInfo.pDesMapping);
             break;
         }
     }
@@ -179,22 +210,45 @@ bool CusCopyFile::CopyProc()
 bool CusCopyFile::InitBytesTransInfo(const char* sourceFile,
     const char* desFile)
 {
-    UINT64 size = FileMapping::GetSize(sourceFile);
+    u_llong size = FileMapping::GetSize(sourceFile);
     memset(&_transInfo, 0, sizeof(_transInfo));
+    _transInfo.sourceFile = sourceFile;
+    _transInfo.desFile = desFile;
     _transInfo.pSrcMapping = FileMapping::Open(sourceFile, 0);
     if (NULL == _transInfo.pSrcMapping)
     {
+        sprintf(_err_info, "%s", "FileMapping::Open sourceFile Failed!");
         return false;
     }
     _transInfo.pDesMapping = FileMapping::Open(desFile, size);
     if (NULL == _transInfo.pDesMapping)
     {
+        sprintf(_err_info, "%s", "FileMapping::Open desFile Failed!");
         return false;
     }
     _transInfo.startPos = 0;
     _transInfo.offset = 0;
     _transInfo.endPos = size;
     return true;
+}
+void CusCopyFile::ClearErrInfo()
+{
+    memset(_err_info, 0, 1024);
+}
+//Get the filePath type
+//Path_No_Exist  Path_Is_File   Path_Is_Dir
+typeCode CusCopyFile::GetPathTypeCode(const char* path)
+{
+    long hFile = 0;
+    struct _finddata_t fileInfo;
+    hFile = _findfirst(path, &fileInfo);
+    if (hFile == -1)
+        return NOEXIST;
+    _findclose(hFile);
+    if (fileInfo.attrib&_A_SUBDIR)
+        return ISDIR;
+    else
+        return ISFILE;
 }
 
 bool 
@@ -227,3 +281,21 @@ const char * CusCopyFile::GetFileName(const char * path)
     char fn[20];
     return path + j + 1;
 }
+
+bool CusCopyFile::Safestrcpy(char * des, const char * src)
+{
+    if (strlen(src) > MAX_PATH - 1)
+        return false;
+    strcpy(des, src);
+    return true;
+}
+
+bool CusCopyFile::Safestrcat(char * des, const char * src)
+{
+    if (strlen(src) + strlen(des) > MAX_PATH - 1)
+        return false;
+    strcat(des, src);
+    return true;
+}
+
+
