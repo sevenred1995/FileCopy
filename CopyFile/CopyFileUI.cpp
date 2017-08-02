@@ -1,4 +1,8 @@
 #include "CopyFileUI.h"
+#include <stdio.h>
+
+#include <ShlObj.h>
+
 
 
 CopyFileUI::CopyFileUI()
@@ -10,38 +14,34 @@ CopyFileUI::CopyFileUI()
 
 CopyFileUI::~CopyFileUI()
 {
+   
 }
 
-bool CopyFileUI::Start()
+void CopyFileUI::Start()
 {
     printf("please input the source file path:\n");
+    sprintf(_sourcePath, "D:\\TempFile\\IP.txt");
     //scanf("%s", &_sourcePath);
-    char src[] = "D:\\TempFile";
-    if(strlen(src)<MAX_PATH)
-      strcpy(_sourcePath,src);
     printf("please input the destination director:\n");
+    sprintf(_desPath, "E:\\");
     //scanf("%s", &_desPath);
-    char des[] = "E:\\CentOS";
-    if (strlen(des)<MAX_PATH)
-      strcpy(_desPath, des);
-    return true;
 }
 
 bool CopyFileUI::Update()
 {
     printf("%s====¡·%s", _sourcePath, _desPath);
     printf("Begin Copy(Y/N):\n");
-    char ch;
-    scanf("%c", &ch); 
+    //getchar();
+    char ch='Y';
+    //scanf("%c", &ch);
     if (ch == 'Y')
     {
         printf("copy...\n");
-        if (false == _copyF.CopyFileA(_sourcePath, _desPath, OVERRIDE))
+        if (false == _copyF.CopyFileToFile(_sourcePath, _desPath, 
+            OVERRIDE_WHEN_EXIST))
         {
-            char* err = (char*)malloc(1024);
-            _copyF.GetErrInfo(err);
+            const char* err=_copyF.GetErrorInfo();
             printf("ERROR:%s\n", err);
-            free(err);
             return false;
         }
         else
@@ -54,9 +54,10 @@ bool CopyFileUI::Update()
     {
         return false;
     }
-    else
-    {
-        return false;
-    }
-      
+    return false;  
+}
+
+bool CopyFileUI::Close()
+{
+    return true;
 }

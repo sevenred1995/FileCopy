@@ -154,7 +154,7 @@
     <ClCompile Include="CopyFile.cpp" />
     <ClCompile Include="CopyFileUI.cpp" />
     <ClCompile Include="FileMapping.cpp" />
-    <ClCompile Include="源.cpp" />
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

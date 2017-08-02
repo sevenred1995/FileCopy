@@ -26,9 +26,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="源.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="FileMapping.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -36,6 +33,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CopyFileUI.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Source.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
