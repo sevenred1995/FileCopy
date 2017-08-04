@@ -1,15 +1,7 @@
 #include <stdio.h>
-#include <iostream>
-#include <time.h>
-#include "CopyFileUI.h"
-#include <signal.h>
-#include <windows.h>
+#include "CopyFile.h"
 int main(int argc, char** argv)
-{
-   // Copy("", "", false);
-    CopyFileUI ui;
-    ui.Start();
-    ui.Update();
-    
+{   
+    CopyFileByMmap("D:\\TempFile\\TX.txt","E:\\IP.txt",true);
     return 0;
 }

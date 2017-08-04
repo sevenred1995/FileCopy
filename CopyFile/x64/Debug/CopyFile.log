@@ -1,13 +1,8 @@
-﻿  Source.cpp
-  CopyFileUI.cpp
+﻿  Log.cpp
+  Generating Code...
+  Compiling...
   CopyFile.cpp
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(168): warning C4244: '=': conversion from 'intptr_t' to 'long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(270): warning C4244: 'argument': conversion from 'UINT64' to 'unsigned long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(280): warning C4244: 'argument': conversion from 'UINT64' to 'unsigned long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(289): warning C4244: '=': conversion from 'UINT64' to 'unsigned long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(302): warning C4244: 'initializing': conversion from 'UINT64' to 'u_long', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(366): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-d:\personproject\work\copyfile\copyfile\copyfile.cpp(370): warning C4101: 'fn': unreferenced local variable
+d:\personproject\work\copyfile\copyfile\copyfile.cpp(23): warning C4101: 'error': unreferenced local variable
   Generating Code...
   CopyFile.vcxproj -> D:\PersonProject\work\CopyFile\x64\Debug\CopyFile.exe
   CopyFile.vcxproj -> D:\PersonProject\work\CopyFile\x64\Debug\CopyFile.pdb (Full PDB)

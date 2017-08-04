@@ -1,18 +1,20 @@
 #pragma once
-#include "CopyFile.h"
-#include <windows.h>
+#include "CopyFileLogic.h"
+
+#define MAX_PATH 260
+
 class CopyFileUI
 {
 public:
     CopyFileUI();
     ~CopyFileUI();
 public:
-    void Start();
-    bool Update();
-    bool Close();
+//    void InitializeUI();
+    void StartUI();
+    void UpdateUI();
+    void CloseUI();
 private:
-    char _sourcePath[MAX_PATH];
-    char _desPath[MAX_PATH];
-    CusCopyFile _copyF;
+    char m_InputSourcePath[MAX_PATH];
+    char m_InputDestPath[MAX_PATH];
+    CopyFileLogic m_logic;
 };
-
