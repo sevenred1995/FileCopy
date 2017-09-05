@@ -11,31 +11,13 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="ui">
-      <UniqueIdentifier>{4dacaf9c-457f-492f-9262-ce37d2cb0dcd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="log">
-      <UniqueIdentifier>{0a0767b1-e6d8-4731-ae14-200adfc8817f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileMapping.h">
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="CopyFile.h">
-      <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="CopyFileLogic.h">
       <Filter>bll</Filter>
-    </ClInclude>
-    <ClInclude Include="File.h">
-      <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="Log.h">
-      <Filter>log</Filter>
-    </ClInclude>
-    <ClInclude Include="CopyFileUI.h">
-      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -45,20 +27,8 @@
     <ClCompile Include="FileMapping.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="CopyFileLogic.cpp">
-      <Filter>bll</Filter>
-    </ClCompile>
     <ClCompile Include="CopyFile.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
-    <ClCompile Include="File.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
-    <ClCompile Include="Log.cpp">
-      <Filter>log</Filter>
-    </ClCompile>
-    <ClCompile Include="CopyFileUI.cpp">
-      <Filter>ui</Filter>
+      <Filter>bll</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

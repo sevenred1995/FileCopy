@@ -41,8 +41,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -147,19 +147,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CopyFile.h" />
-    <ClInclude Include="CopyFileLogic.h" />
-    <ClInclude Include="File.h" />
-    <ClInclude Include="CopyFileUI.h" />
     <ClInclude Include="FileMapping.h" />
-    <ClInclude Include="Log.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CopyFile.cpp" />
-    <ClCompile Include="CopyFileLogic.cpp" />
-    <ClCompile Include="File.cpp" />
-    <ClCompile Include="CopyFileUI.cpp" />
     <ClCompile Include="FileMapping.cpp" />
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
